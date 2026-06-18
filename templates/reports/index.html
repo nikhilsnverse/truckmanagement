@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Reports - FleetMaster Pro{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Reports</h1>
+    <p class="page-subtitle">Analytics and insights for your fleet</p>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-xl-6">
+    <div class="glass-card report-card" onclick="window.location='{{ url_for('reports.profit_report') }}'">
+      <div class="report-icon profit-icon">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <div class="report-content">
+        <h5>Profit Reports</h5>
+        <p>Monthly and period-wise profit & loss analysis with income vs expenses breakdown.</p>
+        <span class="btn-link">View Report <i class="fas fa-arrow-right ms-1"></i></span>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-6">
+    <div class="glass-card report-card" onclick="window.location='{{ url_for('reports.truck_wise') }}'">
+      <div class="report-icon truck-icon">
+        <i class="fas fa-truck"></i>
+      </div>
+      <div class="report-content">
+        <h5>Truck-wise Reports</h5>
+        <p>Performance and profitability breakdown for each truck in your fleet.</p>
+        <span class="btn-link">View Report <i class="fas fa-arrow-right ms-1"></i></span>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-6">
+    <div class="glass-card report-card" onclick="window.location='{{ url_for('reports.export_csv') }}'">
+      <div class="report-icon csv-icon">
+        <i class="fas fa-file-csv"></i>
+      </div>
+      <div class="report-content">
+        <h5>Export CSV</h5>
+        <p>Download all completed trips data as a CSV file for external analysis.</p>
+        <span class="btn-link">Download <i class="fas fa-download ms-1"></i></span>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-6">
+    <div class="glass-card">
+      <div class="card-header-custom">
+        <h5><i class="fas fa-calculator me-2"></i>Quick Summary</h5>
+      </div>
+      <div class="p-3">
+        <p class="text-muted mb-3">View comprehensive financial and operational reports to make data-driven decisions for your fleet.</p>
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="{{ url_for('reports.profit_report') }}" class="btn btn-primary btn-glow btn-sm"><i class="fas fa-chart-pie me-1"></i>Profit Report</a>
+          <a href="{{ url_for('reports.truck_wise') }}" class="btn btn-outline-primary btn-sm"><i class="fas fa-truck me-1"></i>Truck Report</a>
+          <a href="{{ url_for('reports.export_csv') }}" class="btn btn-outline-success btn-sm"><i class="fas fa-download me-1"></i>Export CSV</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

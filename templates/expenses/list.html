@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Expenses - FleetMaster Pro{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Expenses</h1>
+    <p class="page-subtitle">Track and approve expenses</p>
+  </div>
+</div>
+
+<div class="glass-card mb-4">
+  <div class="d-flex gap-2 p-3 flex-wrap">
+    <a href="{{ url_for('expenses.list_expenses') }}" class="btn btn-filter {% if not type_filter and not approved_filter %}active{% endif %}">All</a>
+    <a href="{{ url_for('expenses.list_expenses', type='Fuel') }}" class="btn btn-filter {% if type_filter == 'Fuel' %}active{% endif %}">Fuel</a>
+    <a href="{{ url_for('expenses.list_expenses', type='Toll') }}" class="btn btn-filter {% if type_filter == 'Toll' %}active{% endif %}">Toll</a>
+    <a href="{{ url_for('expenses.list_expenses', type='Maintenance') }}" class="btn btn-filter {% if type_filter == 'Maintenance' %}active{% endif %}">Maintenance</a>
+    <a href="{{ url_for('expenses.list_expenses', approved='pending') }}" class="btn btn-filter {% if approved_filter == 'pending' %}active{% endif %}">Pending Approval</a>
+    <a href="{{ url_for('expenses.list_expenses', approved='approved') }}" class="btn btn-filter {% if approved_filter == 'approved' %}active{% endif %}">Approved</a>
+  </div>
+</div>
+
+<div class="glass-card">
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Description</th>
+          <th>Trip</th>
+          <th>Bill</th>
+          <th>Status</th>
+          {% if session.role == 'owner' %}<th>Actions</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for expense in expenses %}
+        <tr>
+          <td>#{{ expense.id }}</td>
+          <td><span class="expense-type-badge type-{{ expense.type.lower().replace(' ', '_') }}">{{ expense.type }}</span></td>
+          <td class="fw-semibold">${{ "%.2f"|format(expense.amount) }}</td>
+          <td>{{ expense.description or '-' }}</td>
+          <td>{% if expense.trip %}{{ expense.trip.source }} → {{ expense.trip.destination }}{% else %}N/A{% endif %}</td>
+          <td>
+            {% if expense.bill_image %}
+            <a href="{{ url_for('static', filename='uploads/' + expense.bill_image) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+              <i class="fas fa-file"></i>
+            </a>
+            {% else %}-{% endif %}
+          </td>
+          <td>
+            {% if expense.approved %}
+            <span class="status-badge status-completed"><i class="fas fa-check me-1"></i>Approved</span>
+            {% else %}
+            <span class="status-badge status-assigned"><i class="fas fa-clock me-1"></i>Pending</span>
+            {% endif %}
+          </td>
+          {% if session.role == 'owner' %}
+          <td>
+            {% if not expense.approved %}
+            <form method="POST" action="{{ url_for('expenses.approve_expense', expense_id=expense.id) }}" class="d-inline">
+              <button class="btn btn-sm btn-success"><i class="fas fa-check"></i></button>
+            </form>
+            {% endif %}
+            <form method="POST" action="{{ url_for('expenses.delete_expense', expense_id=expense.id) }}" class="d-inline" onsubmit="return confirm('Delete this expense?')">
+              <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+            </form>
+          </td>
+          {% endif %}
+        </tr>
+        {% else %}
+        <tr><td colspan="{% if session.role == 'owner' %}8{% else %}7{% endif %}" class="text-center text-muted py-4">No expenses found</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

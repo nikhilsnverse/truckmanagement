@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if truck else 'Add' }} Truck - FleetMaster Pro{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ 'Edit' if truck else 'Add' }} Truck</h1>
+    <p class="page-subtitle">{{ 'Update truck details' if truck else 'Register a new truck' }}</p>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-xl-8">
+    <div class="glass-card p-4">
+      <form method="POST" action="{{ url_for('trucks.edit_truck', truck_id=truck.id) if truck else url_for('trucks.add_truck') }}">
+        <div class="row g-4">
+          <div class="col-md-6">
+            <label class="form-label">Truck Number <span class="text-danger">*</span></label>
+            <input type="text" name="truck_number" class="form-control" value="{{ truck.truck_number if truck else '' }}" placeholder="e.g., KA-01-AB-1234" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Model <span class="text-danger">*</span></label>
+            <input type="text" name="model" class="form-control" value="{{ truck.model if truck else '' }}" placeholder="e.g., Tata 407" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Insurance Expiry <span class="text-danger">*</span></label>
+            <input type="date" name="insurance_expiry" class="form-control" value="{{ truck.insurance_expiry.strftime('%Y-%m-%d') if truck else '' }}" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Fitness Expiry <span class="text-danger">*</span></label>
+            <input type="date" name="fitness_expiry" class="form-control" value="{{ truck.fitness_expiry.strftime('%Y-%m-%d') if truck else '' }}" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select">
+              <option value="Active" {% if truck and truck.status == 'Active' %}selected{% endif %}>Active</option>
+              <option value="Maintenance" {% if truck and truck.status == 'Maintenance' %}selected{% endif %}>Maintenance</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit" class="btn btn-primary btn-glow">{{ 'Update' if truck else 'Add' }} Truck</button>
+          <a href="{{ url_for('trucks.list_trucks') }}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

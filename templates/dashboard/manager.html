@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Manager Dashboard - FleetMaster Pro{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Manager Dashboard</h1>
+    <p class="page-subtitle">Monitor operations and manage fleet</p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('trips.add_trip') }}" class="btn btn-primary btn-glow">
+      <i class="fas fa-plus me-2"></i>New Trip
+    </a>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-xl-3 col-md-6">
+    <div class="stat-card glass-card">
+      <div class="stat-icon stat-icon-blue"><i class="fas fa-truck"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">Total Trucks</span>
+        <span class="stat-value">{{ total_trucks }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="stat-card glass-card">
+      <div class="stat-icon stat-icon-green"><i class="fas fa-play"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">Active Trips</span>
+        <span class="stat-value">{{ active_trips }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="stat-card glass-card">
+      <div class="stat-icon stat-icon-purple"><i class="fas fa-hourglass-half"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">Pending Trips</span>
+        <span class="stat-value">{{ pending_trips }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="stat-card glass-card">
+      <div class="stat-icon stat-icon-orange"><i class="fas fa-coins"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">Total Revenue</span>
+        <span class="stat-value">${{ "%.2f"|format(total_income) }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-xl-8">
+    <div class="glass-card chart-card">
+      <div class="card-header-custom">
+        <h5><i class="fas fa-chart-line me-2"></i>Revenue vs Expenses</h5>
+      </div>
+      <div class="chart-container">
+        <canvas id="managerChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4">
+    <div class="glass-card alerts-card">
+      <div class="card-header-custom">
+        <h5><i class="fas fa-exclamation-triangle me-2"></i>Expiry Alerts</h5>
+      </div>
+      <div class="alerts-list">
+        {% if expiring_trucks %}
+          {% for truck in expiring_trucks %}
+          <div class="alert-item">
+            <div class="alert-icon bg-warning"><i class="fas fa-clock"></i></div>
+            <div class="alert-content">
+              <span class="alert-title">{{ truck.truck_number }}</span>
+              <span class="alert-desc">
+                {% if truck.insurance_expiry %}Insurance: {{ truck.insurance_expiry.strftime('%d %b %Y') }}{% endif %}
+              </span>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center text-muted py-4">
+            <i class="fas fa-check-circle text-success fa-2x mb-2"></i>
+            <p>All documents up to date</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="glass-card">
+  <div class="card-header-custom">
+    <h5><i class="fas fa-clock-rotate me-2"></i>Recent Trips</h5>
+    <a href="{{ url_for('trips.list_trips') }}" class="btn-link">View All <i class="fas fa-arrow-right ms-1"></i></a>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr><th>Truck</th><th>Route</th><th>Driver</th><th>Status</th><th>Income</th><th>Date</th></tr>
+      </thead>
+      <tbody>
+        {% for trip in recent_trips %}
+        <tr>
+          <td><span class="truck-badge">{{ trip.truck.truck_number if trip.truck else 'N/A' }}</span></td>
+          <td>{{ trip.source }} → {{ trip.destination }}</td>
+          <td>{{ trip.driver.name if trip.driver else 'N/A' }}</td>
+          <td><span class="status-badge status-{{ trip.status.lower() }}">{{ trip.status }}</span></td>
+          <td>${{ "%.2f"|format(trip.income) }}</td>
+          <td>{{ trip.created_at.strftime('%d %b %Y') if trip.created_at else '-' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No trips yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const monthlyData = [
+    { month: 'Jan', income: {{ total_income }}, expense: {{ total_expense }} }
+  ];
+</script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,122 @@
+[data-bs-theme="dark"] {
+  --bg-primary: #0f0f1a;
+  --bg-card: rgba(30,30,50,0.7);
+  --bg-sidebar: rgba(20,20,35,0.9);
+  --bg-navbar: rgba(20,20,35,0.85);
+  --text-primary: #e8e8f0;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --border-color: rgba(255,255,255,0.06);
+  --shadow: 0 8px 32px rgba(0,0,0,0.3);
+  --shadow-hover: 0 12px 40px rgba(0,0,0,0.4);
+  --glass-border: rgba(255,255,255,0.08);
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+[data-bs-theme="dark"] body {
+  background: var(--bg-primary);
+}
+
+[data-bs-theme="dark"] .sidebar {
+  background: var(--bg-sidebar);
+  border-right-color: var(--border-color);
+}
+
+[data-bs-theme="dark"] .top-navbar {
+  background: var(--bg-navbar);
+  border-bottom-color: var(--border-color);
+}
+
+[data-bs-theme="dark"] .glass-card {
+  background: var(--bg-card);
+  border-color: var(--glass-border);
+}
+
+[data-bs-theme="dark"] .search-input {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-primary);
+}
+[data-bs-theme="dark"] .search-input:focus {
+  background: rgba(255,255,255,0.08);
+}
+
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus {
+  background: rgba(255,255,255,0.08);
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
+}
+
+[data-bs-theme="dark"] .table-custom thead th {
+  background: rgba(255,255,255,0.03);
+}
+[data-bs-theme="dark"] .table-custom tbody td {
+  border-bottom-color: var(--border-color);
+}
+[data-bs-theme="dark"] .table-custom tbody tr:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+[data-bs-theme="dark"] .btn-filter {
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+[data-bs-theme="dark"] .btn-filter:hover {
+  background: rgba(102,126,234,0.1);
+  border-color: rgba(102,126,234,0.3);
+}
+
+[data-bs-theme="dark"] .glass-modal {
+  background: rgba(25,25,45,0.95);
+}
+
+[data-bs-theme="dark"] .nav-item:hover {
+  background: rgba(255,255,255,0.05);
+}
+[data-bs-theme="dark"] .nav-item.active {
+  background: rgba(102,126,234,0.15);
+}
+
+[data-bs-theme="dark"] .glass-dropdown {
+  background: rgba(25,25,45,0.95);
+}
+
+[data-bs-theme="dark"] .alert-item {
+  background: rgba(255,255,255,0.03);
+}
+[data-bs-theme="dark"] .alert-item:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+[data-bs-theme="dark"] .btn-outline-secondary {
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+[data-bs-theme="dark"] .btn-outline-secondary:hover {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-primary);
+}
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+}
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+[data-bs-theme="dark"] .truck-icon,
+[data-bs-theme="dark"] .truck-icon-lg {
+  background: rgba(102,126,234,0.15);
+}
+
+[data-bs-theme="dark"] .modal-header,
+[data-bs-theme="dark"] .modal-footer,
+[data-bs-theme="dark"] .truck-card-footer {
+  border-color: var(--border-color);
+}

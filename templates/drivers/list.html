@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Manage Users - FleetMaster Pro{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Manage Users</h1>
+    <p class="page-subtitle">Add and manage managers and drivers</p>
+  </div>
+  <div class="page-actions">
+    <button class="btn btn-primary btn-glow" data-bs-toggle="modal" data-bs-target="#addUserModal">
+      <i class="fas fa-plus me-2"></i>Add User
+    </button>
+  </div>
+</div>
+
+<div class="glass-card mb-4">
+  <div class="card-header-custom">
+    <h5><i class="fas fa-users me-2"></i>All Users</h5>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Phone</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td><div class="d-flex align-items-center gap-2"><div class="user-avatar-xs">{{ u.name[0] | upper }}</div>{{ u.name }}</div></td>
+          <td>{{ u.email }}</td>
+          <td><span class="role-badge role-{{ u.role }}">{{ u.role | title }}</span></td>
+          <td>{{ u.phone or '-' }}</td>
+          <td>{{ u.created_at.strftime('%d %b %Y') if u.created_at else '-' }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('owner.delete_user', user_id=u.id) }}" class="d-inline" onsubmit="return confirm('Delete {{ u.name }}?')">
+              <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No users yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal fade" id="addUserModal">
+  <div class="modal-dialog">
+    <div class="modal-content glass-modal">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Add New User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST" action="{{ url_for('owner.add_user') }}">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" name="name" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            <select name="role" class="form-select" required>
+              <option value="manager">Manager</option>
+              <option value="driver">Driver</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input type="text" name="phone" class="form-control" placeholder="Optional">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

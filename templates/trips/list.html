@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Trips - FleetMaster Pro{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Trips</h1>
+    <p class="page-subtitle">Track and manage all trips</p>
+  </div>
+  <div class="page-actions">
+    {% if session.role in ['owner', 'manager'] %}
+    <a href="{{ url_for('trips.add_trip') }}" class="btn btn-primary btn-glow">
+      <i class="fas fa-plus me-2"></i>New Trip
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="glass-card mb-4">
+  <div class="d-flex gap-2 p-3 flex-wrap">
+    <a href="{{ url_for('trips.list_trips') }}" class="btn btn-filter {% if not status_filter %}active{% endif %}">All</a>
+    <a href="{{ url_for('trips.list_trips', status='Assigned') }}" class="btn btn-filter {% if status_filter == 'Assigned' %}active{% endif %}">Assigned</a>
+    <a href="{{ url_for('trips.list_trips', status='In_Progress') }}" class="btn btn-filter {% if status_filter == 'In_Progress' %}active{% endif %}">In Progress</a>
+    <a href="{{ url_for('trips.list_trips', status='Completed') }}" class="btn btn-filter {% if status_filter == 'Completed' %}active{% endif %}">Completed</a>
+    <a href="{{ url_for('trips.list_trips', status='Cancelled') }}" class="btn btn-filter {% if status_filter == 'Cancelled' %}active{% endif %}">Cancelled</a>
+  </div>
+</div>
+
+<div class="glass-card">
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Truck</th>
+          <th>Route</th>
+          <th>Driver</th>
+          <th>Distance</th>
+          <th>Income</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for trip in trips %}
+        <tr>
+          <td>#{{ trip.id }}</td>
+          <td><span class="truck-badge">{{ trip.truck.truck_number if trip.truck else 'N/A' }}</span></td>
+          <td class="route-cell">{{ trip.source }} <i class="fas fa-arrow-right mx-1 text-muted"></i> {{ trip.destination }}</td>
+          <td>{{ trip.driver.name if trip.driver else 'N/A' }}</td>
+          <td>{{ trip.distance or '-' }} km</td>
+          <td>${{ "%.2f"|format(trip.income) }}</td>
+          <td><span class="status-badge status-{{ trip.status.lower() }}">{{ trip.status }}</span></td>
+          <td>
+            <div class="d-flex gap-1">
+              {% if session.role in ['owner', 'manager'] and trip.status == 'Assigned' %}
+              <a href="{{ url_for('trips.edit_trip', trip_id=trip.id) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
+              <a href="{{ url_for('expenses.add_expense', trip_id=trip.id) }}" class="btn btn-sm btn-outline-warning" title="Add Expense"><i class="fas fa-receipt"></i></a>
+              {% endif %}
+              {% if trip.status == 'Assigned' and session.role == 'driver' and trip.driver_id == session.user_id %}
+              <form method="POST" action="{{ url_for('trips.start_trip', trip_id=trip.id) }}" class="d-inline">
+                <button class="btn btn-sm btn-success" title="Start Trip"><i class="fas fa-play"></i></button>
+              </form>
+              {% endif %}
+              {% if trip.status == 'In_Progress' and session.role == 'driver' and trip.driver_id == session.user_id %}
+              <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#completeModal{{ trip.id }}" title="Complete">
+                <i class="fas fa-stop"></i>
+              </button>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-center text-muted py-4">No trips found</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% for trip in trips %}
+{% if trip.status == 'In_Progress' and trip.driver_id == session.user_id %}
+<div class="modal fade" id="completeModal{{ trip.id }}">
+  <div class="modal-dialog">
+    <div class="modal-content glass-modal">
+      <div class="modal-header">
+        <h5 class="modal-title">Complete Trip #{{ trip.id }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST" action="{{ url_for('trips.complete_trip', trip_id=trip.id) }}">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Distance Covered (km)</label>
+            <input type="number" step="0.1" name="distance" class="form-control" value="{{ trip.distance or '' }}" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Complete Trip</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+{% endblock %}

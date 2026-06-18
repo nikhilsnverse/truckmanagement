@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if trip else 'New' }} Trip - FleetMaster Pro{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ 'Edit' if trip else 'New' }} Trip</h1>
+    <p class="page-subtitle">{{ 'Update trip details' if trip else 'Assign a new trip to a driver' }}</p>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-xl-8">
+    <div class="glass-card p-4">
+      <form method="POST" action="{{ url_for('trips.edit_trip', trip_id=trip.id) if trip else url_for('trips.add_trip') }}">
+        <div class="row g-4">
+          <div class="col-md-6">
+            <label class="form-label">Truck <span class="text-danger">*</span></label>
+            <select name="truck_id" class="form-select" required>
+              <option value="">Select Truck</option>
+              {% for t in trucks %}
+              <option value="{{ t.id }}" {% if trip and trip.truck_id == t.id %}selected{% endif %}>{{ t.truck_number }} - {{ t.model }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Driver <span class="text-danger">*</span></label>
+            <select name="driver_id" class="form-select" required>
+              <option value="">Select Driver</option>
+              {% for d in drivers %}
+              <option value="{{ d.id }}" {% if trip and trip.driver_id == d.id %}selected{% endif %}>{{ d.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Source <span class="text-danger">*</span></label>
+            <input type="text" name="source" class="form-control" value="{{ trip.source if trip else '' }}" placeholder="City or location" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Destination <span class="text-danger">*</span></label>
+            <input type="text" name="destination" class="form-control" value="{{ trip.destination if trip else '' }}" placeholder="City or location" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Trip Type</label>
+            <select name="trip_type" class="form-select" id="tripType">
+              <option value="distance_based" {% if trip and trip.trip_type == 'distance_based' %}selected{% endif %}>Per KM Rate</option>
+              <option value="fixed" {% if trip and trip.trip_type == 'fixed' %}selected{% endif %}>Fixed Rate</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Distance (km)</label>
+            <input type="number" step="0.1" name="distance" class="form-control" value="{{ trip.distance if trip else '' }}" placeholder="Distance" id="distanceInput">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Rate ($)</label>
+            <input type="number" step="0.01" name="rate" class="form-control" value="{{ trip.rate if trip else '' }}" placeholder="Rate per km or fixed" id="rateInput">
+          </div>
+        </div>
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit" class="btn btn-primary btn-glow">{{ 'Update' if trip else 'Assign' }} Trip</button>
+          <a href="{{ url_for('trips.list_trips') }}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
